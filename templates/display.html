@@ -1,0 +1,293 @@
+<html>
+  <head>
+    <script src='https://www.gstatic.com/charts/loader.js'></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+
+      <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <!-- index.html -->
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.4/d3.layout.cloud.js"></script>
+<div>
+<script>
+
+  var word_freqs = {{ word_freqs|safe }};
+  max_freq = {{ max_freq }};
+  fill = d3.scale.category20();
+  layout = d3.layout.cloud()
+      .size([1000, 1000])
+      .words(word_freqs)
+      .padding(5)
+      .rotate(0)
+      .font("Impact")
+      .fontSize(function(d) {
+         return (2.5*d.size/max_freq)*40;
+      })
+      .on("end", draw);
+
+  layout.start();
+
+  function draw(words) {
+    d3.select("body").append("svg")
+      .attr("width", layout.size()[0])
+      .attr("height", layout.size()[1])
+      .attr("style", "display: block; margin-left: auto; margin-right: auto; background: white; text-align: center;")
+      .append("g")
+      .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+      .selectAll("text")
+      .data(words)
+      .enter().append("text")
+      .style("font-size", function(d) { return d.size + "px"; })
+      .style("font-family", "Impact")
+      .style("fill", function(d, i) { return fill(i); })
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+      .text(function(d) { return d.text; });
+  }
+</script>
+
+    <script>
+
+      google.charts.load('49', {'packages': ['vegachart']}).then(drawChart);
+
+      function drawChart() {
+        const dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({type: 'string', 'id': 'category'});
+        dataTable.addColumn({type: 'number', 'id': 'amount'});
+        dataTable.addRows([
+          ['covid19', 94219],
+          ['coronavirus', 14125],
+         ['new', 13794],
+         ['covid', 13170],
+         ['people', 8882],
+         ['pandemic', 7959],
+         ['deaths', 6919],
+         ['health', 5098],
+         ['today', 4969],
+         ['positive', 4850],
+         ['total', 4525],
+         ['day', 4478],
+         ['need', 3998],
+         ['like', 3916],
+         ['mask', 3801],
+         ['help', 3734],
+         ['world', 3651],
+         ['time', 3459],
+         ['vaccine', 3401],
+         ['news', 3174],
+         ['know', 2896],
+         ['masks', 2790],
+         ['reported', 2748],
+         ['update', 2693],
+         ['virus', 2686],
+         ['spread', 2611],
+         ['testing', 2600],
+         ['lockdown', 2518],
+         ['state', 2484],
+        ]);
+
+        const options = {
+          "vega": {
+            "$schema": "https://vega.github.io/schema/vega/v4.json",
+            "width": 1300,
+            "height": 500,
+            "padding": 5,
+
+            'data': [{'name': 'table', 'source': 'datatable'}],
+
+            "signals": [
+              {
+                "name": "tooltip",
+                "value": {},
+                "on": [
+                  {"events": "rect:mouseover", "update": "datum"},
+                  {"events": "rect:mouseout",  "update": "{}"}
+                ]
+              }
+            ],
+
+            "scales": [
+              {
+                "name": "xscale",
+                "type": "band",
+                "domain": {"data": "table", "field": "category"},
+                "range": "width",
+                "padding": 0.05,
+                "round": true
+              },
+              {
+                "name": "yscale",
+                "domain": {"data": "table", "field": "amount"},
+                "nice": true,
+                "range": "height"
+              }
+            ],
+
+            "axes": [
+              { "orient": "bottom", "scale": "xscale" },
+              { "orient": "left", "scale": "yscale" }
+            ],
+
+            "marks": [
+              {
+                "type": "rect",
+                "from": {"data":"table"},
+                "encode": {
+                  "enter": {
+                    "x": {"scale": "xscale", "field": "category"},
+                    "width": {"scale": "xscale", "band": 1},
+                    "y": {"scale": "yscale", "field": "amount"},
+                    "y2": {"scale": "yscale", "value": 0}
+                  },
+                  "update": {
+                    "fill": {"value": "steelblue"}
+                  },
+                  "hover": {
+                    "fill": {"value": "red"}
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "encode": {
+                  "enter": {
+                    "align": {"value": "center"},
+                    "baseline": {"value": "bottom"},
+                    "fill": {"value": "#333"}
+                  },
+                  "update": {
+                    "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
+                    "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
+                    "text": {"signal": "tooltip.amount"},
+                    "fillOpacity": [
+                      {"test": "datum === tooltip", "value": 0},
+                      {"value": 1}
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        };
+
+        const chart = new google.visualization.VegaChart(document.getElementById('chart-div'));
+        chart.draw(dataTable, options);
+      }
+    </script>
+      <script>
+
+      if ({{alltweets_size}}>0){
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+            var data = google.visualization.arrayToDataTable([
+              ['Sentiment', 'Tweets_no'],
+              ['Positive Tweets',  {{positiveTweets_size}}],
+              ['Negative Tweets',  {{negativeTweets_size}}]
+
+
+
+        ]);
+
+        var options = {
+          title: 'Covid19 Tweet Responses of {{countryname}}'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+      }else{
+            var msg = "There are no responses for {{countryname}}"
+            document.write('<p id="jstext">' + msg + '</p>');
+
+      }
+
+
+      </script>
+      <style>
+          #jstext {
+              text-align: center;
+              font-size: 30px;
+              margin-top:200px;
+            }
+
+            #tweetscontainer{
+            margin-top:600px
+            }
+            #container {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+             }
+
+            .positive_tweets{
+               box-shadow: 5px 10px 8px 10px #888888;
+               padding:10px;
+
+            }
+            .negative_tweets{
+               box-shadow: 5px 10px 8px 10px #888888;
+               padding:10px;
+               margin-top:100px;
+
+            }
+            p{
+                background-color:#cbf7c7;
+                padding-left:15px;
+                padding-right:15px;
+                margin-top:30px;
+
+
+               }
+
+      </style>
+  </head>
+
+  <body>
+   <div class="maincontainer" style="display:flex;flex-wrap:wrap">
+       <div class="piechartcontainer">
+                <div id="piechart" style="width: 700px; height: 700px;"></div>
+
+       </div>
+        <div class="tweetscontainer" style="width:750px;margin-top:70px;margin-left:10px">
+
+             <div class="positive_tweets" >
+                 <h4>Positive Tweets</h4>
+                {% for item in positiveTweetsDisplay %}
+                <tr>
+                    <p>{{item}}</p>
+                </tr>
+
+                {% endfor %}
+            </div>
+
+            <div class="negative_tweets" >
+                <h4>Negative Tweets</h4>
+
+                {% for item in negativeTweetsDisplay %}
+               <tr>
+                   <p>{{item}}</p>
+                </tr>
+                {% endfor %}
+            </div>
+            <br>
+
+
+       </div>
+       <div id="chart-div" style="width: 100px; height: 350px;margin-left:100px;margin-right:100px"></div>
+       <label style="margin-top:570px;margin-left:300px"> Freequent words </label>
+
+       <div id="container" style="margin-top:-100px"></div>
+    </div>
+
+
+      </body>
+
+</html>

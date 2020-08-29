@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <title>COVID-19 - Twitter Sentiment Analysis</title>
+</head>
+<style>
+    .pagetitle{
+    text-align:center;
+    margin-top:100px;
+    margin-left:-70px;
+    font-family: 'Oswald', sans-serif;
+    font-size:56px;
+
+    }
+    .searchform{
+      text-align: center;
+      margin-top:150px;
+
+    }
+    .searchinput{
+      display:inline-block;
+      width:770px;
+      line-height:30px;
+      border: 2px solid #73AD21;
+      border-radius: 50px;
+      outline:none;
+      padding:20px;
+      padding-left:40px;
+      box-shadow: 5px 10px 8px 10px #888888;
+
+
+     }
+     .search-btn{
+     background-color:transparent;
+     border:none;
+     outline:none;
+     margin-left:20px;
+     }
+
+     i.fa {
+      color: #73AD21;
+      font-size: 38px;
+     }
+     .buttongroup{
+      display:flex;
+      margin-top:70px;
+      margin-left:200px;
+      margin-right:100px;
+      justify-content:space-between;
+      }
+
+     .country-btn{
+       width:200px;
+       height:70px;
+       background-color: #73AD21;
+       border:none;
+       outline:none;
+       justify-content:space-between;
+       margin-left:10px;
+
+      }
+      .countryform{}
+</style>
+<body>
+ <div class="searchcontainer">
+     <div class="pagetitle">
+         <h1>COVID-19 - Twitter Sentiment Analysis</h1>
+     </div>
+     <div class="searchcontent">
+         <form action="{{ url_for('result')}}" method="POST" class="searchform">
+             <input type="text" placeholder="Enter country name" name="name" class="searchinput">
+             <button type="submit" class="search-btn"><i class="fa fa-search fa-3x"></i></button>
+
+         </form>
+     </div>
+     <div class="buttoncontainer">
+         <div class="buttongroup">
+            <form action="{{ url_for('usaload')}}" method="POST" class="countryform">
+                <input type="submit" class="country-btn" value="USA"></input>
+             </form>
+
+            <form action="{{ url_for('ukload')}}" method="POST">
+                 <input type="submit" class="country-btn" value="UK"></input>
+             </form>
+
+            <form action="{{ url_for('franceload')}}" method="POST" >
+                 <input type="submit" class="country-btn" value="FRANCE"></input>
+
+             </form>
+
+            <form action="{{ url_for('spainload')}}" method="POST" >
+                 <input type="submit" class="country-btn" value="SPAIN"></input>
+             </form>
+
+            <form action="{{ url_for('italyload')}}" method="POST" >
+              <input type="submit" class="country-btn" value="ITALY"></input>
+             </form>
+
+
+         </div>
+     </div>
+
+ </div>
+
+
+
+</body>
+</html>
